@@ -12,6 +12,7 @@ import TextInputCompo from '../../components/TextInputCompo';
 import ButtonComponent from '../../components/ButtonComponent';
 import {validateEmail, validatePhoneNumber} from '../../utils/validations';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export default function SignUpScreen() {
   const [name, setName] = useState('');
@@ -25,6 +26,75 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
+
+  const [loading, setLoading] = useState(false);
+
+  const handleUploadUserData = async () => {
+    try {
+      await auth().currentUser?.updateProfile({
+        displayName: name,
+      });
+      await firestore().collection('users').doc(auth().currentUser.uid).set({
+        fullName: name,
+
+        email: email,
+        userUid: auth().currentUser.uid,
+        imageUrl: '',
+        // dateOfBirth: dateOfBirth,
+        dateOfJoin: new Date(),
+      });
+      setLoading(false);
+      // setUser(auth().currentUser);
+    } catch (error) {
+      setLoading(false);
+      console.log('Error while uploading data of user to firestore: ', error);
+    }
+  };
+
+  const signUpUser = () => {
+    try {
+      setLoading(true);
+      auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(result => {
+          handleUploadUserData();
+          console.log('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            setLoading(false);
+            console.log('That email address is already in use!');
+            Alert.alert('That email address is already in use!');
+          }
+          if (error.code === 'auth/invalid-email') {
+            setLoading(false);
+            console.log('That email address is invalid!');
+            Alert.alert('That email address is invalid!');
+          }
+          if (error.code == 'auth/weak-password') {
+            setLoading(false);
+            console.log(
+              'Password is weak, password must be 6 characters or more!',
+            );
+            Alert.alert('Password is weak, try again!');
+          }
+          if (error.code === 'auth/network-request-failed') {
+            setLoading(false);
+            console.log(
+              'auth/network-request-failed. Please check your network connection!',
+            );
+            Alert.alert('Please check your network connection!');
+          }
+          setLoading(false);
+          console.log('getting ERROR while Sign up with Eamil: ', error);
+        });
+    } catch (error) {
+      console.log(
+        'Error in creating user account in userIneterest Screen: ',
+        error,
+      );
+    }
+  };
 
   const handleSignUp = () => {
     if (name == '') {
@@ -106,7 +176,7 @@ export default function SignUpScreen() {
       validateEmail(email) &&
       validatePhoneNumber(mobile)
     ) {
-      console.log('kkkkk');
+      signUpUser();
     } else {
       console.log('hhhh');
     }
@@ -199,6 +269,7 @@ export default function SignUpScreen() {
                 onPress={handleSignUp}
                 style={styles.btn}
                 title="Sign Up"
+                loading={loading}
               />
               <Text style={styles.forgotTxt}>
                 Already have an account?{' '}
