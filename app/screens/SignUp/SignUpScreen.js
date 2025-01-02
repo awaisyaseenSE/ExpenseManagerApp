@@ -13,8 +13,11 @@ import ButtonComponent from '../../components/ButtonComponent';
 import {validateEmail, validatePhoneNumber} from '../../utils/validations';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {useNavigation} from '@react-navigation/native';
+import useAuths from '../../auth/useAuth';
 
 export default function SignUpScreen() {
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [email, setEmail] = useState('');
@@ -26,6 +29,8 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
+
+  const {user, setUser} = useAuths();
 
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +49,7 @@ export default function SignUpScreen() {
         dateOfJoin: new Date(),
       });
       setLoading(false);
-      // setUser(auth().currentUser);
+      setUser(auth().currentUser);
     } catch (error) {
       setLoading(false);
       console.log('Error while uploading data of user to firestore: ', error);
@@ -273,7 +278,11 @@ export default function SignUpScreen() {
               />
               <Text style={styles.forgotTxt}>
                 Already have an account?{' '}
-                <Text style={styles.loginTxt}>Login</Text>
+                <Text
+                  style={styles.loginTxt}
+                  onPress={() => navigation.navigate('LoginScreen')}>
+                  Login
+                </Text>
               </Text>
             </View>
           </View>

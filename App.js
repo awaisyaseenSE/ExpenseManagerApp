@@ -6,6 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import AppNavigator from './app/navigation/AppNavigator';
 import AuthNavigator from './app/navigation/AuthNavigator';
 import auth from '@react-native-firebase/auth';
+import AuthsContext from './app/auth/AuthsContext';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -24,7 +25,9 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {user !== null ? <AppNavigator /> : <AuthNavigator />}
+      <AuthsContext.Provider value={{user, setUser}}>
+        {user !== null ? <AppNavigator /> : <AuthNavigator />}
+      </AuthsContext.Provider>
     </NavigationContainer>
   );
 }
