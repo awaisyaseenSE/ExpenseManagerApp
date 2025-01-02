@@ -4,4 +4,5 @@ export default {
   black: '#093030',
   input_bg: '#DFF7E2',
   grey: '#A9ADA6',
+  blue_light: '#6DB6FE',
 };
