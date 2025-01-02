@@ -2,6 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Dimensions} from 'react-native';
 import HomeScreen from '../screens/Home/HomeScreen';
+import BottomTabNavigator from './BottomTabNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,8 +12,8 @@ function AppNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="BottomTabNavigator"
+        component={BottomTabNavigator}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
