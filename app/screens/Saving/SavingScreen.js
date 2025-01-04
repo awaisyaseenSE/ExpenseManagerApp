@@ -13,15 +13,17 @@ import firestore from '@react-native-firebase/firestore';
 import ButtonComponent from '../../components/ButtonComponent';
 import ShowCategoryCompo from '../../components/ShowCategoryCompo';
 import {addCategory} from '../../query/addCategory ';
+import AddNewCategoryModal from '../../Modal/AddNewCategoryModal';
 
 export default function SavingScreen() {
   const predefinedCategories = ['Travel', 'New House', 'Car', 'Wedding'];
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleAddCategory = async () => {
-    await addCategory('Savings');
+    setShowModal(true);
   };
 
   useEffect(() => {
@@ -88,6 +90,9 @@ export default function SavingScreen() {
             onPress={handleAddCategory}
           />
         </View>
+        {showModal && (
+          <AddNewCategoryModal show={showModal} setShow={setShowModal} />
+        )}
       </View>
     </>
   );

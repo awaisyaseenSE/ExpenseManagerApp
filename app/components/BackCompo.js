@@ -10,6 +10,7 @@ const BackCompo = ({showBack = true, title = '', style}) => {
       {showBack ? (
         <TouchableOpacity
           activeOpacity={0.8}
+          hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
           onPress={() => navigation.goBack()}>
           <Image source={require('../assets/back.png')} style={styles.backIC} />
         </TouchableOpacity>

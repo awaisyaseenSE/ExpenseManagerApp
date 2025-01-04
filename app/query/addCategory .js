@@ -6,12 +6,12 @@ export const addCategory = async categoryName => {
 
   if (!user) {
     alert('No user is logged in.');
-    return;
+    return null;
   }
 
   if (!categoryName.trim()) {
     alert('Category name cannot be empty!');
-    return;
+    return null;
   }
 
   try {
@@ -21,8 +21,9 @@ export const addCategory = async categoryName => {
       .collection('userCategories')
       .add({name: categoryName});
 
-    alert('Category added successfully!');
+    return true;
   } catch (error) {
-    console.error('Error adding category:', error);
+    console.log('Error adding category:', error);
+    return null;
   }
 };

@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import React from 'react';
 import colors from '../config/colors';
+import {useNavigation} from '@react-navigation/native';
+import {screenNames} from '../navigation/ScreenNames';
 
 const screenWidth = Dimensions.get('window').width;
 const numColumns = 3;
@@ -20,8 +22,14 @@ const availableSpace =
 const itemSize = availableSpace / numColumns;
 
 const ShowCategoryCompo = ({data}) => {
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity activeOpacity={0.8} style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() =>
+        navigation.navigate(screenNames.savingDetailScreen, {data: data})
+      }
+      style={styles.container}>
       <View style={styles.icContainer}>
         <Image source={require('../assets/category.png')} style={styles.ic} />
       </View>
