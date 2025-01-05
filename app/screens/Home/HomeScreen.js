@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import ButtonComponent from '../../components/ButtonComponent';
@@ -16,6 +17,8 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {screenNames} from '../../navigation/ScreenNames';
 import TotalExpenseIncomeShowingCompo from '../../components/TotalExpenseIncomeShowingCompo';
 import firestore from '@react-native-firebase/firestore';
+import ShowSavingCompo from '../../components/savings/ShowSavingCompo';
+import HomeListCompo from '../../components/Home/HomeListCompo';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -23,6 +26,7 @@ export default function HomeScreen() {
   const [lastWeekIncome, setLastWeekIncome] = useState(null);
   const [lastWeekExpense, setLastWeekExpense] = useState(null);
   const [percentage, setPercentage] = useState(0);
+  const [allData, setAllData] = useState([]);
 
   const parseDateString = dateString => {
     const months = [
@@ -80,7 +84,7 @@ export default function HomeScreen() {
       let totalIncomeAmount = 0;
       incomesSnapshot.forEach(doc => {
         const incomeDate = parseDateString(doc.data().date);
-        console.log(incomeDate);
+
         if (incomeDate >= lastWeekStart && incomeDate < lastWeekEnd) {
           totalIncomeAmount += parseFloat(doc.data().amount);
         }
@@ -98,6 +102,9 @@ export default function HomeScreen() {
           totalExpenseAmount += parseFloat(doc.data().amount);
         }
       });
+      let fullData = [];
+
+      let incomeData = incomesSnapshot.docs;
 
       setLastWeekIncome(totalIncomeAmount.toFixed(0));
       setLastWeekExpense(totalExpenseAmount.toFixed(0));
@@ -109,9 +116,62 @@ export default function HomeScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchLastWeekData();
+  const fetchIncomeSavingsData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const userId = auth()?.currentUser?.uid;
+      let data = [];
+
+      // Fetch all incomes
+      const incomesSnapshot = await firestore()
+        .collection('incomes')
+        .where('userId', '==', userId)
+        .get();
+      incomesSnapshot.forEach(doc => {
+        const incomeData = doc.data();
+        data.push({
+          ...incomeData,
+          isIncome: true,
+          isSaving: false,
+        });
+      });
+
+      // Fetch all savings
+      const savingsSnapshot = await firestore()
+        .collection('savings')
+        .where('userId', '==', userId)
+        .get();
+      savingsSnapshot.forEach(doc => {
+        const savingData = doc.data();
+        data.push({
+          ...savingData,
+          isIncome: false,
+          isSaving: true,
+        });
+      });
+      setAllData(data);
+    } catch (error) {
+      console.log('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        await fetchLastWeekData();
+        await fetchIncomeSavingsData();
+      };
+
+      fetchData();
+
+      // Optionally add cleanup if needed
+      return () => {
+        // Cleanup tasks if necessary, e.g., cancelling subscriptions
+      };
+    }, []),
+  );
 
   return (
     <View style={styles.container}>
@@ -138,7 +198,8 @@ export default function HomeScreen() {
           <View style={styles.main}>
             <View style={styles.viewGreen}>
               <View>
-                <Text>Savings on goal {percentage} </Text>
+                <Text style={styles.heading}>Remaning{'\n'}Income</Text>
+                <Text style={styles.h2}>{percentage}%</Text>
               </View>
               <View style={styles.lastWeekTxtContainer}>
                 <View style={styles.row1}>
@@ -164,6 +225,14 @@ export default function HomeScreen() {
                 </View>
               </View>
             </View>
+            <FlatList
+              style={{marginTop: 14}}
+              data={allData}
+              renderItem={({item, index}) => (
+                <HomeListCompo data={item} index={index} />
+              )}
+              showsVerticalScrollIndicator={false}
+            />
           </View>
         )}
       </View>

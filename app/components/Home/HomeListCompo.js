@@ -2,12 +2,16 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import colors from '../../config/colors';
 
-const ShowSavingCompo = ({data, index}) => {
+const HomeListCompo = ({data, index}) => {
   return (
     <View style={styles.container}>
       <View style={styles.icContainer}>
         <Image
-          source={require('../../assets/category.png')}
+          source={
+            data?.isSaving
+              ? require('../../assets/Expense.png')
+              : require('../../assets/Income.png')
+          }
           style={styles.ic}
         />
       </View>
@@ -63,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ShowSavingCompo;
+export default HomeListCompo;
