@@ -11,4 +11,5 @@ export const screenNames = {
   transactionScreen: 'TransactionScreen',
   savingDetailScreen: 'SavingDetailScreen',
   addSavingScreen: 'AddSavingScreen',
+  addIncomeScreen: 'AddIncomeScreen',
 };

@@ -18,15 +18,16 @@ import DatePicker from 'react-native-date-picker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-export default function AddSavingScreen({route}) {
+export default function AddIncomeScreen() {
   const navigation = useNavigation();
-  const categoryName = route?.params?.data;
+  const [categoryName, setCategoryName] = useState('');
+  const [categoryNameError, setCategoryNameError] = useState('');
   const [date, setDate] = useState('');
   const [dateError, setDateError] = useState('');
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
-  const [expenseTitle, setExpenseTitle] = useState('');
-  const [expenseTitleError, setExpenseTitleError] = useState('');
+  const [incomeTitle, setIncomeTitle] = useState('');
+  const [incomeTitleError, setIncomeTitleError] = useState('');
   const [expenseDesc, setExpenseDesc] = useState('');
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,34 +54,45 @@ export default function AddSavingScreen({route}) {
       setAmountError('');
     }
 
-    if (expenseTitle == '') {
-      setExpenseTitleError('Title is required!');
+    if (incomeTitle == '') {
+      setIncomeTitleError('Income Title is required!');
     } else {
-      if (expenseTitle.length < 4) {
-        setExpenseTitleError('Enter atleast 4 characters!');
+      if (incomeTitle.length < 4) {
+        setIncomeTitleError('Enter atleast 4 characters!');
       } else {
-        setExpenseTitleError('');
+        setIncomeTitleError('');
       }
     }
 
-    if (date !== '' && amount !== '' && expenseTitle.length > 3) {
+    if (categoryName == '') {
+      setCategoryNameError('Income Category is required!');
+    } else {
+      setCategoryNameError('');
+    }
+
+    if (
+      date !== '' &&
+      amount !== '' &&
+      incomeTitle.length > 3 &&
+      categoryName !== ''
+    ) {
       setLoading(true);
       try {
-        const savingsRef = firestore().collection('savings').doc();
-        const savingsId = savingsRef.id;
-        await savingsRef.set({
-          title: expenseTitle,
+        const incomeRef = firestore().collection('incomes').doc();
+        const incomeId = incomeRef.id;
+        await incomeRef.set({
+          title: incomeTitle,
           date: date,
           amount: amount,
           desc: expenseDesc,
-          savingsId: savingsId,
+          incomeId: incomeId,
           category: categoryName,
-          currency,
           userId: auth()?.currentUser?.uid,
+          currency,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
         setLoading(false);
-        Alert.alert('Savings added!');
+        Alert.alert('Income added!');
         navigation.goBack();
       } catch (error) {
         setLoading(false);
@@ -100,7 +112,7 @@ export default function AddSavingScreen({route}) {
         contentContainerStyle={{flexGrow: 1}}
         showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <BackCompo title="Add Savings" />
+          <BackCompo title="Add Income" />
           <View style={styles.content}>
             <Text style={styles.label}>Date</Text>
             <TouchableOpacity
@@ -134,10 +146,23 @@ export default function AddSavingScreen({route}) {
             <Text style={styles.label}>Category</Text>
 
             <TextInputCompo
-              placeholder={categoryName}
+              placeholder={'Enter category of income'}
               value={categoryName}
-              editable={false}
+              onChangeText={text => {
+                if (text.trim().length) {
+                  let finalTxt = text.replace(/\s\s+/g, ' ');
+                  setCategoryName(finalTxt);
+                  if (text.length > 0) {
+                    setIncomeTitleError('');
+                  }
+                } else {
+                  setCategoryName('');
+                }
+              }}
             />
+            {categoryNameError && (
+              <Text style={styles.errorTxt}>{categoryNameError}</Text>
+            )}
             <View style={{marginVertical: 10}} />
             <Text style={styles.label}>Amount</Text>
             <TextInputCompo
@@ -153,24 +178,24 @@ export default function AddSavingScreen({route}) {
             />
             {amountError && <Text style={styles.errorTxt}>{amountError}</Text>}
             <View style={{marginVertical: 10}} />
-            <Text style={styles.label}>Expense Title</Text>
+            <Text style={styles.label}>Income Title</Text>
             <TextInputCompo
-              placeholder="Enter expense title"
-              value={expenseTitle}
+              placeholder="Enter income title"
+              value={incomeTitle}
               onChangeText={text => {
                 if (text.trim().length) {
                   let finalTxt = text.replace(/\s\s+/g, ' ');
-                  setExpenseTitle(finalTxt);
+                  setIncomeTitle(finalTxt);
                   if (text.length > 0) {
-                    setExpenseTitleError('');
+                    setIncomeTitleError('');
                   }
                 } else {
-                  setExpenseTitle('');
+                  setIncomeTitle('');
                 }
               }}
             />
-            {expenseTitleError && (
-              <Text style={styles.errorTxt}>{expenseTitleError}</Text>
+            {incomeTitleError && (
+              <Text style={styles.errorTxt}>{incomeTitleError}</Text>
             )}
             <View style={{marginVertical: 10}} />
 

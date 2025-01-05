@@ -5,6 +5,7 @@ import HomeScreen from '../screens/Home/HomeScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import SavingDetailScreen from '../screens/Saving/SavingDetailScreen';
 import AddSavingScreen from '../screens/Saving/AddSavingScreen';
+import AddIncomeScreen from '../screens/Income/AddIncomeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,11 @@ function AppNavigator() {
       <Stack.Screen
         name="AddSavingScreen"
         component={AddSavingScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddIncomeScreen"
+        component={AddIncomeScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
