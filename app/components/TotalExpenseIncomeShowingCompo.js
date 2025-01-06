@@ -5,7 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import colors from '../config/colors';
 import {useFocusEffect} from '@react-navigation/native';
 
-const TotalExpenseIncomeShowingCompo = ({setPercentage}) => {
+const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
   const [totalExpense, setTotalExpense] = useState('');
   const [totalIncome, setTotalIncome] = useState('');
   const [loading, setLoading] = useState(true);
@@ -74,6 +74,7 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage}) => {
       });
 
       // Update state with the calculated totals
+      setTotalBalance(totalIncomeAmount.toFixed(0));
       setTotalIncome(totalIncomeAmount.toFixed(0));
       setTotalExpense(totalExpenseAmount.toFixed(0));
 

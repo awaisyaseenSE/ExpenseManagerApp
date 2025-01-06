@@ -27,6 +27,7 @@ export default function HomeScreen() {
   const [lastWeekExpense, setLastWeekExpense] = useState(null);
   const [percentage, setPercentage] = useState(0);
   const [allData, setAllData] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
 
   const parseDateString = dateString => {
     const months = [
@@ -187,7 +188,10 @@ export default function HomeScreen() {
           />
         </TouchableOpacity>
       </View>
-      <TotalExpenseIncomeShowingCompo setPercentage={setPercentage} />
+      <TotalExpenseIncomeShowingCompo
+        setTotalBalance={setTotalBalance}
+        setPercentage={setPercentage}
+      />
       <View style={styles.content}>
         {loading && (
           <View style={styles.loadingContainer}>
