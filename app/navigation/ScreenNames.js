@@ -12,4 +12,5 @@ export const screenNames = {
   savingDetailScreen: 'SavingDetailScreen',
   addSavingScreen: 'AddSavingScreen',
   addIncomeScreen: 'AddIncomeScreen',
+  searchScreen: 'SearchScreen',
 };

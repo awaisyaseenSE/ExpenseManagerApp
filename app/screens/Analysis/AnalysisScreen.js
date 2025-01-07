@@ -43,7 +43,14 @@ export default function AnalysisScreen() {
             <ActivityIndicator size={'large'} color={colors.primary} />
           </View>
         )}
-        {!loading && <View style={styles.main}></View>}
+        {!loading && (
+          <View style={styles.main}>
+            <ButtonComponent
+              title="Search"
+              onPress={() => navigation.navigate(screenNames.searchScreen)}
+            />
+          </View>
+        )}
       </View>
     </View>
   );
