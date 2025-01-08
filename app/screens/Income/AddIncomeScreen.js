@@ -7,8 +7,9 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import colors from '../../config/colors';
 import BackCompo from '../../components/BackCompo';
 import ButtonComponent from '../../components/ButtonComponent';
@@ -24,6 +25,7 @@ export default function AddIncomeScreen() {
   const [categoryNameError, setCategoryNameError] = useState('');
   const [date, setDate] = useState('');
   const [dateError, setDateError] = useState('');
+  const predefinedCategories = ['Travel', 'New House', 'Car', 'Wedding'];
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
   const [incomeTitle, setIncomeTitle] = useState('');
@@ -32,6 +34,9 @@ export default function AddIncomeScreen() {
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const currency = 'usd';
+  const [categories, setCategories] = useState([]);
+  const [showCategory, setShowCategory] = useState(false);
+  const [selectCategory, setSelectCategory] = useState('');
 
   const onDateSelect = selectedDate => {
     const mydate = new Date(selectedDate);
@@ -64,7 +69,7 @@ export default function AddIncomeScreen() {
       }
     }
 
-    if (categoryName == '') {
+    if (selectCategory == '') {
       setCategoryNameError('Income Category is required!');
     } else {
       setCategoryNameError('');
@@ -74,7 +79,7 @@ export default function AddIncomeScreen() {
       date !== '' &&
       amount !== '' &&
       incomeTitle.length > 3 &&
-      categoryName !== ''
+      selectCategory !== ''
     ) {
       setLoading(true);
       try {
@@ -86,7 +91,7 @@ export default function AddIncomeScreen() {
           amount: amount,
           desc: expenseDesc,
           incomeId: incomeId,
-          category: categoryName,
+          category: selectCategory,
           userId: auth()?.currentUser?.uid,
           currency,
           createdAt: firestore.FieldValue.serverTimestamp(),
@@ -99,6 +104,64 @@ export default function AddIncomeScreen() {
         console.log('error while adding booking: ', error);
       }
     }
+  };
+
+  useEffect(() => {
+    const user = auth().currentUser;
+
+    if (!user) {
+      console.log('No user is logged in.');
+      return;
+    }
+
+    setLoading(true);
+
+    const unsubscribe = firestore()
+      .collection('categories')
+      .doc(user.uid)
+      .collection('userCategories')
+      .onSnapshot(
+        snapshot => {
+          const userCategories = [];
+          snapshot.forEach(doc => {
+            userCategories.push(doc.data().name);
+          });
+
+          const combinedCategories = [
+            ...new Set([...predefinedCategories, ...userCategories]),
+          ];
+          setCategories(combinedCategories);
+          // console.log(combinedCategories);
+          setLoading(false);
+        },
+        error => {
+          console.log('Error listening to user categories:', error);
+          setLoading(false);
+        },
+      );
+    return () => unsubscribe();
+  }, []);
+
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        style={styles.cc}
+        activeOpacity={0.8}
+        onPress={() => {
+          setSelectCategory(item);
+          setShowCategory(false);
+          setCategoryNameError('');
+        }}>
+        <Text
+          style={{
+            fontSize: 14,
+            color: colors.black,
+            fontWeight: '600',
+          }}>
+          {item}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -145,7 +208,7 @@ export default function AddIncomeScreen() {
             <View style={{marginVertical: 10}} />
             <Text style={styles.label}>Category</Text>
 
-            <TextInputCompo
+            {/* <TextInputCompo
               placeholder={'Enter category of income'}
               value={categoryName}
               onChangeText={text => {
@@ -159,7 +222,31 @@ export default function AddIncomeScreen() {
                   setCategoryName('');
                 }
               }}
-            />
+            /> */}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => setShowCategory(true)}>
+              <TextInputCompo
+                placeholder="Select the category"
+                value={selectCategory}
+                editable={false}
+                rightIcon={require('../../assets/down.png')}
+                rightIconStyle={{
+                  width: 14,
+                  height: 14,
+                }}
+                rightIconOnPress={() => setShowCategory(true)}
+                onPressIn={() => setShowCategory(true)}
+              />
+            </TouchableOpacity>
+            {categories.length > 0 && showCategory && (
+              <FlatList
+                data={categories}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}
+                scrollEnabled={false}
+              />
+            )}
             {categoryNameError && (
               <Text style={styles.errorTxt}>{categoryNameError}</Text>
             )}
@@ -258,5 +345,10 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginTop: '10%',
+    marginBottom: 20,
+  },
+  cc: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
   },
 });

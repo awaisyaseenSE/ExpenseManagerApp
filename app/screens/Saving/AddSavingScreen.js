@@ -233,5 +233,6 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginTop: '10%',
+    marginBottom: 20,
   },
 });
