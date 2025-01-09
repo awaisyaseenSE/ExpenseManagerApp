@@ -3,8 +3,6 @@ import {
   Text,
   StyleSheet,
   Image,
-  TouchableOpacity,
-  FlatList,
   ActivityIndicator,
   ScrollView,
   Alert,
@@ -14,9 +12,7 @@ import colors from '../../config/colors';
 import auth from '@react-native-firebase/auth';
 import BackCompo from '../../components/BackCompo';
 import firestore from '@react-native-firebase/firestore';
-import ListCompo from '../../components/Profile/ListCompo';
 import {useNavigation} from '@react-navigation/native';
-import {screenNames} from '../../navigation/ScreenNames';
 import TextInputCompo from '../../components/TextInputCompo';
 import ButtonComponent from '../../components/ButtonComponent';
 import {validatePhoneNumber} from '../../utils/validations';
