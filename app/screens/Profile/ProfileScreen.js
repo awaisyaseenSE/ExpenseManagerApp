@@ -16,11 +16,14 @@ import BackCompo from '../../components/BackCompo';
 import firestore from '@react-native-firebase/firestore';
 import ListCompo from '../../components/Profile/ListCompo';
 import useAuth from '../../auth/useAuth';
+import {StackActions, useNavigation} from '@react-navigation/native';
+import {screenNames} from '../../navigation/ScreenNames';
 
 export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const {logout} = useAuth();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -86,6 +89,12 @@ export default function ProfileScreen() {
                 <ListCompo
                   title="Edit Profile"
                   image={require('../../assets/profile.png')}
+                  onPress={() =>
+                    // navigation.navigate(screenNames.editProfileScreen)
+                    navigation.dispatch(
+                      StackActions.replace(screenNames.editProfileScreen),
+                    )
+                  }
                 />
                 <ListCompo
                   title="Security"

@@ -47,6 +47,7 @@ export default function SignUpScreen() {
         imageUrl: '',
         // dateOfBirth: dateOfBirth,
         dateOfJoin: new Date(),
+        mobile,
       });
       setLoading(false);
       setUser(auth().currentUser);
@@ -205,7 +206,17 @@ export default function SignUpScreen() {
               <TextInputCompo
                 placeholder="Enter full name"
                 value={name}
-                onChangeText={text => setName(text)}
+                onChangeText={text => {
+                  if (text.trim().length) {
+                    let finalTxt = text.replace(/\s\s+/g, ' ');
+                    setName(finalTxt);
+                    if (text.length > 0) {
+                      setNameError('');
+                    }
+                  } else {
+                    setName('');
+                  }
+                }}
               />
               {nameError !== '' && (
                 <Text style={styles.errorTxt}>{nameError}</Text>
@@ -217,7 +228,17 @@ export default function SignUpScreen() {
                 placeholder="example@gmail.com"
                 value={email}
                 keyboardType="email-address"
-                onChangeText={text => setEmail(text)}
+                onChangeText={text => {
+                  if (text.trim().length) {
+                    let finalTxt = text.replace(/\s\s+/g, ' ');
+                    setEmail(finalTxt);
+                    if (text.length > 0) {
+                      setEmailError('');
+                    }
+                  } else {
+                    setEmail('');
+                  }
+                }}
               />
               {emailError !== '' && (
                 <Text style={styles.errorTxt}>{emailError}</Text>
@@ -228,7 +249,17 @@ export default function SignUpScreen() {
               <TextInputCompo
                 placeholder="Enter mobile number"
                 value={mobile}
-                onChangeText={text => setMobile(text)}
+                onChangeText={text => {
+                  if (text.trim().length) {
+                    let finalTxt = text.replace(/\s\s+/g, ' ');
+                    setMobile(finalTxt);
+                    if (text.length > 0) {
+                      setMobileError('');
+                    }
+                  } else {
+                    setMobile('');
+                  }
+                }}
                 keyboardType="phone-pad"
               />
               {mobileError !== '' && (
@@ -240,7 +271,17 @@ export default function SignUpScreen() {
               <TextInputCompo
                 placeholder="********"
                 value={password}
-                onChangeText={text => setPassword(text)}
+                onChangeText={text => {
+                  if (text.trim().length) {
+                    let finalTxt = text.replace(/\s\s+/g, ' ');
+                    setPassword(finalTxt);
+                    if (text.length > 0) {
+                      setPasswordError('');
+                    }
+                  } else {
+                    setPassword('');
+                  }
+                }}
                 secureTextEntry={securePassword}
                 secureText={
                   !securePassword
@@ -258,7 +299,17 @@ export default function SignUpScreen() {
               <TextInputCompo
                 placeholder="********"
                 value={confirmPassword}
-                onChangeText={text => setConfirmPassword(text)}
+                onChangeText={text => {
+                  if (text.trim().length) {
+                    let finalTxt = text.replace(/\s\s+/g, ' ');
+                    setConfirmPassword(finalTxt);
+                    if (text.length > 0) {
+                      setConfirmPasswordError('');
+                    }
+                  } else {
+                    setConfirmPassword('');
+                  }
+                }}
                 secureTextEntry={securePassword}
                 secureText={
                   !securePassword

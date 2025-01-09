@@ -7,6 +7,7 @@ import SavingDetailScreen from '../screens/Saving/SavingDetailScreen';
 import AddSavingScreen from '../screens/Saving/AddSavingScreen';
 import AddIncomeScreen from '../screens/Income/AddIncomeScreen';
 import SearchScreen from '../screens/Search/SearchScreen';
+import EditProfileScreen from '../screens/Profile/EditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,11 @@ function AppNavigator() {
       <Stack.Screen
         name="SearchScreen"
         component={SearchScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="EditProfileScreen"
+        component={EditProfileScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

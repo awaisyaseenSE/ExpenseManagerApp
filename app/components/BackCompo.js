@@ -3,15 +3,18 @@ import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../config/colors';
 
-const BackCompo = ({showBack = true, title = '', style}) => {
+const BackCompo = ({showBack = true, title = '', style, onPressBack}) => {
   const navigation = useNavigation();
+  const backPress = onPressBack ? onPressBack : () => navigation.goBack();
+
   return (
     <View style={[styles.container, style]}>
       {showBack ? (
         <TouchableOpacity
           activeOpacity={0.8}
           hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
-          onPress={() => navigation.goBack()}>
+          // onPress={() => navigation.goBack()}
+          onPress={backPress}>
           <Image source={require('../assets/back.png')} style={styles.backIC} />
         </TouchableOpacity>
       ) : (

@@ -109,7 +109,17 @@ export default function LoginScreen() {
                   placeholder="example@gmail.com"
                   value={email}
                   keyboardType="email-address"
-                  onChangeText={text => setEmail(text)}
+                  onChangeText={text => {
+                    if (text.trim().length) {
+                      let finalTxt = text.replace(/\s\s+/g, ' ');
+                      setEmail(finalTxt);
+                      if (text.length > 0) {
+                        setEmailError('');
+                      }
+                    } else {
+                      setEmail('');
+                    }
+                  }}
                 />
                 {emailError !== '' && (
                   <Text style={styles.errorTxt}>{emailError}</Text>
@@ -119,7 +129,17 @@ export default function LoginScreen() {
                 <TextInputCompo
                   placeholder="********"
                   value={password}
-                  onChangeText={text => setPassword(text)}
+                  onChangeText={text => {
+                    if (text.trim().length) {
+                      let finalTxt = text.replace(/\s\s+/g, ' ');
+                      setPassword(finalTxt);
+                      if (text.length > 0) {
+                        setPasswordError('');
+                      }
+                    } else {
+                      setPassword('');
+                    }
+                  }}
                   secureTextEntry={securePassword}
                   secureText={
                     !securePassword
