@@ -112,12 +112,13 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   footer: {
-    paddingVertical: 14,
+    paddingVertical: 8,
     backgroundColor: colors.white,
     alignItems: 'center',
   },
   btn: {
     width: '40%',
+    height: 38,
   },
   loadingContainer: {
     flex: 1,

@@ -7,6 +7,7 @@ import {
   Image,
   ActivityIndicator,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import ButtonComponent from '../../components/ButtonComponent';
@@ -200,43 +201,48 @@ export default function HomeScreen() {
         )}
         {!loading && (
           <View style={styles.main}>
-            <View style={styles.viewGreen}>
-              <View>
-                <Text style={styles.heading}>Remaning{'\n'}Income</Text>
-                <Text style={styles.h2}>{percentage}%</Text>
-              </View>
-              <View style={styles.lastWeekTxtContainer}>
-                <View style={styles.row1}>
-                  <Image
-                    source={require('../../assets/Income.png')}
-                    style={styles.ic2}
-                  />
+            <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+              <View style={{flex: 1}}>
+                <View style={styles.viewGreen}>
                   <View>
-                    <Text style={styles.h2}>Last week Income</Text>
-                    <Text style={styles.h2}>${lastWeekIncome || 0}</Text>
+                    <Text style={styles.heading}>Remaning{'\n'}Income</Text>
+                    <Text style={styles.h2}>{percentage}%</Text>
+                  </View>
+                  <View style={styles.lastWeekTxtContainer}>
+                    <View style={styles.row1}>
+                      <Image
+                        source={require('../../assets/Income.png')}
+                        style={styles.ic2}
+                      />
+                      <View>
+                        <Text style={styles.h2}>Last week Income</Text>
+                        <Text style={styles.h2}>${lastWeekIncome || 0}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.line} />
+                    <View style={styles.row1}>
+                      <Image
+                        source={require('../../assets/Expense.png')}
+                        style={styles.ic2}
+                      />
+                      <View>
+                        <Text style={styles.h2}>Last week Expenses</Text>
+                        <Text style={styles.h2}>${lastWeekExpense || 0}</Text>
+                      </View>
+                    </View>
                   </View>
                 </View>
-                <View style={styles.line} />
-                <View style={styles.row1}>
-                  <Image
-                    source={require('../../assets/Expense.png')}
-                    style={styles.ic2}
-                  />
-                  <View>
-                    <Text style={styles.h2}>Last week Expenses</Text>
-                    <Text style={styles.h2}>${lastWeekExpense || 0}</Text>
-                  </View>
-                </View>
+                <FlatList
+                  style={{marginTop: 14}}
+                  data={allData}
+                  renderItem={({item, index}) => (
+                    <HomeListCompo data={item} index={index} />
+                  )}
+                  showsVerticalScrollIndicator={false}
+                  scrollEnabled={false}
+                />
               </View>
-            </View>
-            <FlatList
-              style={{marginTop: 14}}
-              data={allData}
-              renderItem={({item, index}) => (
-                <HomeListCompo data={item} index={index} />
-              )}
-              showsVerticalScrollIndicator={false}
-            />
+            </ScrollView>
           </View>
         )}
       </View>
@@ -281,12 +287,13 @@ const styles = StyleSheet.create({
     height: 30,
   },
   footer: {
-    paddingVertical: 14,
+    paddingVertical: 8,
     backgroundColor: colors.white,
     alignItems: 'center',
   },
   btn: {
     width: '40%',
+    height: 38,
   },
   loadingContainer: {
     flex: 1,
