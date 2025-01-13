@@ -305,7 +305,7 @@ export default function SearchScreen() {
                           style={styles.ic3}
                         />
                       </TouchableOpacity>
-                      <Text>Income</Text>
+                      <Text style={styles.label}>Income</Text>
                     </View>
                     <View style={[styles.row1, {marginLeft: 24}]}>
                       <TouchableOpacity
@@ -321,7 +321,7 @@ export default function SearchScreen() {
                           style={styles.ic3}
                         />
                       </TouchableOpacity>
-                      <Text>Expense</Text>
+                      <Text style={styles.label}>Expense</Text>
                     </View>
                   </View>
                 </View>
@@ -473,5 +473,10 @@ const styles = StyleSheet.create({
   cc: {
     paddingVertical: 6,
     paddingHorizontal: 10,
+  },
+  label: {
+    fontSize: 14,
+    color: colors.black,
+    fontWeight: '600',
   },
 });
