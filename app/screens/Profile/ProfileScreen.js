@@ -105,6 +105,7 @@ export default function ProfileScreen() {
                 <ListCompo
                   title="Help"
                   image={require('../../assets/help.png')}
+                  onPress={() => navigation.navigate('FaqScreen')}
                 />
                 <ListCompo
                   title="Logout"
