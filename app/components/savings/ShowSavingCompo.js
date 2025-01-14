@@ -1,8 +1,38 @@
 import {View, Text, StyleSheet, Image} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import colors from '../../config/colors';
+import constansts from '../../constants/constansts';
 
 const ShowSavingCompo = ({data, index}) => {
+  const selectedCurrency = constansts.currencyCode;
+
+  const [exchangeRate, setExchangeRate] = useState(1);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      if (selectedCurrency.code !== 'USD') {
+        try {
+          const response = await fetch(
+            'https://api.exchangerate-api.com/v4/latest/USD',
+          );
+          const rates = await response.json();
+          const rate = rates.rates[selectedCurrency] || 1;
+          setExchangeRate(rate);
+        } catch (error) {
+          console.error('Error fetching exchange rate:', error);
+        }
+      }
+    };
+
+    fetchExchangeRate();
+  }, [selectedCurrency]);
+
+  const convertAmount = amount => {
+    if (selectedCurrency === 'USD') {
+      return amount;
+    }
+    return amount * exchangeRate;
+  };
   return (
     <View style={styles.container}>
       <View style={styles.icContainer}>
@@ -16,7 +46,9 @@ const ShowSavingCompo = ({data, index}) => {
         <Text style={styles.heading}>{data?.title}</Text>
         <Text style={styles.dateTxt}>{data?.date}</Text>
       </View>
-      <Text style={styles.price}>${data?.amount}</Text>
+      <Text style={styles.price}>
+        {selectedCurrency} {convertAmount(data?.amount).toFixed(1)}
+      </Text>
     </View>
   );
 };

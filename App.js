@@ -7,6 +7,8 @@ import AppNavigator from './app/navigation/AppNavigator';
 import AuthNavigator from './app/navigation/AuthNavigator';
 import auth from '@react-native-firebase/auth';
 import AuthsContext from './app/auth/AuthsContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import constansts from './app/constants/constansts';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -19,7 +21,23 @@ export default function App() {
     }
   };
 
+  const loadSelectedCurrency = async () => {
+    try {
+      const savedCurrency = await AsyncStorage.getItem('selectedCurrency');
+      if (savedCurrency) {
+        let dd = JSON.parse(savedCurrency);
+        console.log(dd);
+        constansts.currencyCode = dd?.code;
+      } else {
+        constansts.currencyCode = 'USD';
+      }
+    } catch (error) {
+      console.error('Failed to load the selected currency:', error);
+    }
+  };
+
   useEffect(() => {
+    loadSelectedCurrency();
     checkUser();
   }, []);
 

@@ -4,6 +4,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import colors from '../config/colors';
 import {useFocusEffect} from '@react-navigation/native';
+import constansts from '../constants/constansts';
 
 const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
   const [totalExpense, setTotalExpense] = useState('');
@@ -100,6 +101,37 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
     }, [fetchTotals]),
   );
 
+  const selectedCurrency = constansts.currencyCode;
+
+  const [exchangeRate, setExchangeRate] = useState(1);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      if (selectedCurrency.code !== 'USD') {
+        try {
+          const response = await fetch(
+            'https://api.exchangerate-api.com/v4/latest/USD',
+          );
+          const rates = await response.json();
+          const rate = rates.rates[selectedCurrency] || 1;
+          setExchangeRate(rate);
+          console.log('rate: ', rate);
+        } catch (error) {
+          console.error('Error fetching exchange rate:', error);
+        }
+      }
+    };
+
+    fetchExchangeRate();
+  }, [selectedCurrency, totalIncome, totalExpense]);
+
+  const convertAmount = amount => {
+    if (selectedCurrency === 'USD') {
+      return amount;
+    }
+    return amount * exchangeRate;
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -117,7 +149,9 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
         {loading ? (
           <ActivityIndicator size="small" color={colors.white} />
         ) : (
-          <Text style={styles.h1}>${totalIncome}</Text>
+          <Text style={styles.h1}>
+            {selectedCurrency} {convertAmount(totalIncome).toFixed(1)}
+          </Text>
         )}
       </View>
 
@@ -136,7 +170,7 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
                 color: colors.blue,
               },
             ]}>
-            -${totalExpense}
+            - {selectedCurrency} {convertAmount(totalExpense).toFixed(1)}
           </Text>
         )}
       </View>

@@ -101,6 +101,9 @@ export default function ProfileScreen() {
                 <ListCompo
                   title="Setting"
                   image={require('../../assets/setting.png')}
+                  onPress={() =>
+                    navigation.navigate('CurrencyConversionScreen')
+                  }
                 />
                 <ListCompo
                   title="Help"

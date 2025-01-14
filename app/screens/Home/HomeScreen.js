@@ -20,6 +20,7 @@ import TotalExpenseIncomeShowingCompo from '../../components/TotalExpenseIncomeS
 import firestore from '@react-native-firebase/firestore';
 import ShowSavingCompo from '../../components/savings/ShowSavingCompo';
 import HomeListCompo from '../../components/Home/HomeListCompo';
+import constansts from '../../constants/constansts';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -175,6 +176,36 @@ export default function HomeScreen() {
     }, []),
   );
 
+  const selectedCurrency = constansts.currencyCode;
+
+  const [exchangeRate, setExchangeRate] = useState(1);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      if (selectedCurrency.code !== 'USD') {
+        try {
+          const response = await fetch(
+            'https://api.exchangerate-api.com/v4/latest/USD',
+          );
+          const rates = await response.json();
+          const rate = rates.rates[selectedCurrency] || 1;
+          setExchangeRate(rate);
+        } catch (error) {
+          console.error('Error fetching exchange rate:', error);
+        }
+      }
+    };
+
+    fetchExchangeRate();
+  }, [selectedCurrency, lastWeekIncome, lastWeekExpense]);
+
+  const convertAmount = amount => {
+    if (selectedCurrency === 'USD') {
+      return amount;
+    }
+    return amount * exchangeRate;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -216,7 +247,10 @@ export default function HomeScreen() {
                       />
                       <View>
                         <Text style={styles.h2}>Last week Income</Text>
-                        <Text style={styles.h2}>${lastWeekIncome || 0}</Text>
+                        <Text style={styles.h2}>
+                          {selectedCurrency}{' '}
+                          {convertAmount(lastWeekIncome).toFixed(1) || 0}
+                        </Text>
                       </View>
                     </View>
                     <View style={styles.line} />
@@ -227,7 +261,10 @@ export default function HomeScreen() {
                       />
                       <View>
                         <Text style={styles.h2}>Last week Expenses</Text>
-                        <Text style={styles.h2}>${lastWeekExpense || 0}</Text>
+                        <Text style={styles.h2}>
+                          {selectedCurrency}{' '}
+                          {convertAmount(lastWeekExpense).toFixed(1) || 0}
+                        </Text>
                       </View>
                     </View>
                   </View>

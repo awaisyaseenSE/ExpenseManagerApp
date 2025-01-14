@@ -14,6 +14,7 @@ import auth from '@react-native-firebase/auth';
 import BackCompo from '../../components/BackCompo';
 import firestore from '@react-native-firebase/firestore';
 import HomeListCompo from '../../components/Home/HomeListCompo';
+import constansts from '../../constants/constansts';
 
 export default function TransactionScreen() {
   const [percentage, setPercentage] = useState(0);
@@ -66,12 +67,44 @@ export default function TransactionScreen() {
     fetchIncomeSavingsData();
   }, []);
 
+  const selectedCurrency = constansts.currencyCode;
+
+  const [exchangeRate, setExchangeRate] = useState(1);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      if (selectedCurrency.code !== 'USD') {
+        try {
+          const response = await fetch(
+            'https://api.exchangerate-api.com/v4/latest/USD',
+          );
+          const rates = await response.json();
+          const rate = rates.rates[selectedCurrency] || 1;
+          setExchangeRate(rate);
+        } catch (error) {
+          console.error('Error fetching exchange rate:', error);
+        }
+      }
+    };
+
+    fetchExchangeRate();
+  }, [selectedCurrency, totalBalance]);
+
+  const convertAmount = amount => {
+    if (selectedCurrency === 'USD') {
+      return amount;
+    }
+    return amount * exchangeRate;
+  };
+
   return (
     <View style={styles.container}>
       <BackCompo title="Transaction" showBack={false} />
       <View style={styles.row}>
         <Text style={styles.h3}>Total Balance</Text>
-        <Text style={styles.heading}>${totalBalance}</Text>
+        <Text style={styles.heading}>
+          {selectedCurrency} {convertAmount(totalBalance).toFixed(1) || 0}
+        </Text>
       </View>
       <TotalExpenseIncomeShowingCompo
         setTotalBalance={setTotalBalance}

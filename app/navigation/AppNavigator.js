@@ -9,6 +9,7 @@ import AddIncomeScreen from '../screens/Income/AddIncomeScreen';
 import SearchScreen from '../screens/Search/SearchScreen';
 import EditProfileScreen from '../screens/Profile/EditProfileScreen';
 import FaqScreen from '../screens/Faq/FaqScreen';
+import CurrencyConversionScreen from '../screens/Currency/CurrencyConversionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,11 @@ function AppNavigator() {
       <Stack.Screen
         name="FaqScreen"
         component={FaqScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CurrencyConversionScreen"
+        component={CurrencyConversionScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
