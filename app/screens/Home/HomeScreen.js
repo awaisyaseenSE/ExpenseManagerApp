@@ -21,6 +21,7 @@ import firestore from '@react-native-firebase/firestore';
 import ShowSavingCompo from '../../components/savings/ShowSavingCompo';
 import HomeListCompo from '../../components/Home/HomeListCompo';
 import constansts from '../../constants/constansts';
+import * as Progress from 'react-native-progress';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
