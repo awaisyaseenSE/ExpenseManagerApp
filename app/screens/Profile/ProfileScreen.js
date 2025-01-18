@@ -100,7 +100,7 @@ export default function ProfileScreen() {
                 />
                 <ListCompo
                   title="Convert Currency"
-                  image={require('../../assets/setting.png')}
+                  image={require('../../assets/euro-coin.png')}
                   onPress={() =>
                     navigation.navigate('CurrencyConversionScreen')
                   }
