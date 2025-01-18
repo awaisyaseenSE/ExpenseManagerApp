@@ -47,7 +47,7 @@ const ShowSavingCompo = ({data, index}) => {
         <Text style={styles.dateTxt}>{data?.date}</Text>
       </View>
       <Text style={styles.price}>
-        {selectedCurrency} {convertAmount(data?.amount).toFixed(1)}
+        {selectedCurrency} {convertAmount(data?.amount)}
       </Text>
     </View>
   );
