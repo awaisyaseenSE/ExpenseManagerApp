@@ -75,9 +75,9 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
       });
 
       // Update state with the calculated totals
-      setTotalBalance(totalIncomeAmount.toFixed(0));
-      setTotalIncome(totalIncomeAmount.toFixed(0));
-      setTotalExpense(totalExpenseAmount.toFixed(0));
+      setTotalBalance(totalIncomeAmount);
+      setTotalIncome(totalIncomeAmount);
+      setTotalExpense(totalExpenseAmount);
 
       const remainingAmount = totalIncomeAmount - totalExpenseAmount;
       const progress =
@@ -126,6 +126,9 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
   }, [selectedCurrency, totalIncome, totalExpense]);
 
   const convertAmount = amount => {
+    if (!amount) {
+      return 0;
+    }
     if (selectedCurrency === 'USD') {
       return amount;
     }
@@ -150,7 +153,7 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
           <ActivityIndicator size="small" color={colors.white} />
         ) : (
           <Text style={styles.h1}>
-            {selectedCurrency} {convertAmount(totalIncome).toFixed(1)}
+            {selectedCurrency} {convertAmount(totalIncome) || 0}
           </Text>
         )}
       </View>
@@ -170,7 +173,7 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
                 color: colors.blue,
               },
             ]}>
-            - {selectedCurrency} {convertAmount(totalExpense).toFixed(1)}
+            - {selectedCurrency} {convertAmount(totalExpense) || 0}
           </Text>
         )}
       </View>

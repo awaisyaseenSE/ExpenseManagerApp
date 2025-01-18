@@ -200,6 +200,9 @@ export default function HomeScreen() {
   }, [selectedCurrency, lastWeekIncome, lastWeekExpense]);
 
   const convertAmount = amount => {
+    if (!amount) {
+      return 0;
+    }
     if (selectedCurrency === 'USD') {
       return amount;
     }
@@ -249,7 +252,7 @@ export default function HomeScreen() {
                         <Text style={styles.h2}>Last week Income</Text>
                         <Text style={styles.h2}>
                           {selectedCurrency}{' '}
-                          {convertAmount(lastWeekIncome).toFixed(1) || 0}
+                          {convertAmount(lastWeekIncome) || 0}
                         </Text>
                       </View>
                     </View>
@@ -263,7 +266,7 @@ export default function HomeScreen() {
                         <Text style={styles.h2}>Last week Expenses</Text>
                         <Text style={styles.h2}>
                           {selectedCurrency}{' '}
-                          {convertAmount(lastWeekExpense).toFixed(1) || 0}
+                          {convertAmount(lastWeekExpense) || 0}
                         </Text>
                       </View>
                     </View>

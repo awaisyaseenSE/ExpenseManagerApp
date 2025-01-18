@@ -99,7 +99,7 @@ export default function ProfileScreen() {
                   image={require('../../assets/security.png')}
                 />
                 <ListCompo
-                  title="Setting"
+                  title="Convert Currency"
                   image={require('../../assets/setting.png')}
                   onPress={() =>
                     navigation.navigate('CurrencyConversionScreen')
