@@ -56,7 +56,11 @@ export default function AddIncomeScreen() {
     if (amount == '') {
       setAmountError('Amount is required!');
     } else {
-      setAmountError('');
+      if (amount < 1) {
+        setAmountError('Amount must be greater then 1');
+      } else {
+        setAmountError('');
+      }
     }
 
     if (incomeTitle == '') {
@@ -77,7 +81,7 @@ export default function AddIncomeScreen() {
 
     if (
       date !== '' &&
-      amount !== '' &&
+      amount > 0 &&
       incomeTitle.length > 3 &&
       selectCategory !== ''
     ) {
@@ -259,7 +263,9 @@ export default function AddIncomeScreen() {
                 // Remove non-numeric characters and trim spaces
                 const formattedText = text.replace(/[^0-9]/g, '').trim();
                 setAmount(formattedText);
-                setAmountError('');
+                setAmountError(
+                  formattedText > 0 ? '' : 'Amount must be greater then 1',
+                );
               }}
               keyboardType="number-pad"
             />

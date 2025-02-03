@@ -218,7 +218,7 @@ export default function CurrencyConversionScreen() {
         ]}
         activeOpacity={0.8}
         onPress={() => setSelectedCurrency(item)}>
-        <Text>{item?.name}</Text>
+        <Text style={styles.txt}>{item?.name}</Text>
       </TouchableOpacity>
     );
   };
@@ -350,5 +350,10 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: '50%',
+  },
+  txt: {
+    fontSize: 14,
+    color: colors.black,
+    fontWeight: '500',
   },
 });

@@ -7,8 +7,9 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import colors from '../../config/colors';
 import BackCompo from '../../components/BackCompo';
 import ButtonComponent from '../../components/ButtonComponent';
@@ -31,6 +32,11 @@ export default function AddSavingScreen({route}) {
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const currency = 'usd';
+  const predefinedCategories = ['Travel', 'New House', 'Car', 'Wedding'];
+  const [categories, setCategories] = useState([]);
+  const [categoryNameError, setCategoryNameError] = useState('');
+  const [showCategory, setShowCategory] = useState(false);
+  const [selectCategory, setSelectCategory] = useState('');
 
   const onDateSelect = selectedDate => {
     const mydate = new Date(selectedDate);
@@ -50,7 +56,17 @@ export default function AddSavingScreen({route}) {
     if (amount == '') {
       setAmountError('Amount is required!');
     } else {
-      setAmountError('');
+      if (amount < 1) {
+        setAmountError('Amount must be greater then 1');
+      } else {
+        setAmountError('');
+      }
+    }
+
+    if (selectCategory == '') {
+      setCategoryNameError('Income Category is required!');
+    } else {
+      setCategoryNameError('');
     }
 
     if (expenseTitle == '') {
@@ -63,7 +79,7 @@ export default function AddSavingScreen({route}) {
       }
     }
 
-    if (date !== '' && amount !== '' && expenseTitle.length > 3) {
+    if (date !== '' && amount > 0 && expenseTitle.length > 3) {
       setLoading(true);
       try {
         const savingsRef = firestore().collection('savings').doc();
@@ -87,6 +103,64 @@ export default function AddSavingScreen({route}) {
         console.log('error while adding booking: ', error);
       }
     }
+  };
+
+  useEffect(() => {
+    const user = auth().currentUser;
+
+    if (!user) {
+      console.log('No user is logged in.');
+      return;
+    }
+
+    setLoading(true);
+
+    const unsubscribe = firestore()
+      .collection('categories')
+      .doc(user.uid)
+      .collection('userCategories')
+      .onSnapshot(
+        snapshot => {
+          const userCategories = [];
+          snapshot.forEach(doc => {
+            userCategories.push(doc.data().name);
+          });
+
+          const combinedCategories = [
+            ...new Set([...predefinedCategories, ...userCategories]),
+          ];
+          setCategories(combinedCategories);
+          console.log(combinedCategories);
+          setLoading(false);
+        },
+        error => {
+          console.log('Error listening to user categories:', error);
+          setLoading(false);
+        },
+      );
+    return () => unsubscribe();
+  }, []);
+
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        style={styles.cc}
+        activeOpacity={0.8}
+        onPress={() => {
+          setSelectCategory(item);
+          setShowCategory(false);
+          setCategoryNameError('');
+        }}>
+        <Text
+          style={{
+            fontSize: 14,
+            color: colors.black,
+            fontWeight: '600',
+          }}>
+          {item}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -133,11 +207,38 @@ export default function AddSavingScreen({route}) {
             <View style={{marginVertical: 10}} />
             <Text style={styles.label}>Category</Text>
 
-            <TextInputCompo
+            {/* <TextInputCompo
               placeholder={categoryName}
               value={categoryName}
               editable={false}
-            />
+            /> */}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => setShowCategory(true)}>
+              <TextInputCompo
+                placeholder="Select the category"
+                value={selectCategory}
+                editable={false}
+                rightIcon={require('../../assets/down.png')}
+                rightIconStyle={{
+                  width: 14,
+                  height: 14,
+                }}
+                rightIconOnPress={() => setShowCategory(true)}
+                onPressIn={() => setShowCategory(true)}
+              />
+            </TouchableOpacity>
+            {categories.length > 0 && showCategory && (
+              <FlatList
+                data={categories}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}
+                scrollEnabled={false}
+              />
+            )}
+            {categoryNameError && (
+              <Text style={styles.errorTxt}>{categoryNameError}</Text>
+            )}
             <View style={{marginVertical: 10}} />
             <Text style={styles.label}>Amount</Text>
             <TextInputCompo
@@ -147,7 +248,9 @@ export default function AddSavingScreen({route}) {
                 // Remove non-numeric characters and trim spaces
                 const formattedText = text.replace(/[^0-9]/g, '').trim();
                 setAmount(formattedText);
-                setAmountError('');
+                setAmountError(
+                  formattedText > 0 ? '' : 'Amount must be greater then 1',
+                );
               }}
               keyboardType="number-pad"
             />
@@ -234,5 +337,9 @@ const styles = StyleSheet.create({
   btn: {
     marginTop: '10%',
     marginBottom: 20,
+  },
+  cc: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
   },
 });
