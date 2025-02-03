@@ -17,7 +17,11 @@ import ButtonComponent from '../../components/ButtonComponent';
 import useAuth from '../../auth/useAuth';
 import auth from '@react-native-firebase/auth';
 import colors from '../../config/colors';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {
+  useNavigation,
+  useFocusEffect,
+  StackActions,
+} from '@react-navigation/native';
 import {screenNames} from '../../navigation/ScreenNames';
 import TotalExpenseIncomeShowingCompo from '../../components/TotalExpenseIncomeShowingCompo';
 import firestore from '@react-native-firebase/firestore';
@@ -247,7 +251,8 @@ export default function CurrencyConversionScreen() {
         constansts.currencyCode = selectedCurrency?.code;
         setLoading(false);
         Alert.alert('Currency is saved!');
-        navigation.goBack();
+        // navigation.goBack();
+        navigation.dispatch(StackActions.replace('BottomTabNavigator'));
       }
     } catch (error) {
       console.log(error);

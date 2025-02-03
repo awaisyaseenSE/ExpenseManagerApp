@@ -132,7 +132,12 @@ const TotalExpenseIncomeShowingCompo = ({setPercentage, setTotalBalance}) => {
     if (selectedCurrency === 'USD') {
       return amount;
     }
-    return amount * exchangeRate;
+    let converted = amount * exchangeRate;
+    if (converted % 1 === 0) {
+      return converted; // Return as a whole number
+    } else {
+      return Number(converted.toFixed(2)); // Return with 2 decimal places
+    }
   };
 
   return (

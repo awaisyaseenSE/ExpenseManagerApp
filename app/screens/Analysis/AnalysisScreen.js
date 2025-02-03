@@ -29,6 +29,7 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from 'react-native-chart-kit';
+import constansts from '../../constants/constansts';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -48,6 +49,44 @@ export default function AnalysisScreen() {
     strokeWidth: 2, // optional, default 3
     barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
+  };
+
+  const selectedCurrency = constansts.currencyCode;
+
+  const [exchangeRate, setExchangeRate] = useState(1);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      if (selectedCurrency.code !== 'USD') {
+        try {
+          const response = await fetch(
+            'https://api.exchangerate-api.com/v4/latest/USD',
+          );
+          const rates = await response.json();
+          const rate = rates.rates[selectedCurrency] || 1;
+          setExchangeRate(rate);
+        } catch (error) {
+          console.error('Error fetching exchange rate:', error);
+        }
+      }
+    };
+
+    fetchExchangeRate();
+  }, []);
+
+  const convertAmount = amount => {
+    if (!amount) {
+      return 0;
+    }
+    if (selectedCurrency === 'USD') {
+      return amount;
+    }
+    let converted = amount * exchangeRate;
+    if (converted % 1 === 0) {
+      return converted; // Return as a whole number
+    } else {
+      return Number(converted.toFixed(0)); // Return with 2 decimal places
+    }
   };
 
   const [allData, setAllData] = useState([]);
@@ -120,30 +159,42 @@ export default function AnalysisScreen() {
     fetchIncomeSavingsData();
   }, []);
 
-  const chartData = {
-    labels: ['Income', 'Expense'], // Labels for the bars
-    datasets: [
-      {
-        data: [
-          // Sum of all income amounts
-          allData
-            .filter(item => item.isIncome)
-            .reduce(
-              (total, current) => total + parseFloat(current.amount || 0),
-              0,
-            ),
+  const [chartData, setChartData] = useState({
+    labels: ['Income', 'Expense', 'Remaining'],
+    datasets: [{data: [0, 0, 0]}], // Initial state
+  });
 
-          // Sum of all savings amounts
-          allData
-            .filter(item => item.isSaving)
-            .reduce(
-              (total, current) => total + parseFloat(current.amount || 0),
-              0,
-            ),
-        ],
-      },
-    ],
-  };
+  useEffect(() => {
+    const totalIncome = allData
+      .filter(item => item.isIncome)
+      .reduce((total, current) => total + parseFloat(current.amount || 0), 0);
+
+    const totalExpense = allData
+      .filter(item => item.isSaving)
+      .reduce((total, current) => total + parseFloat(current.amount || 0), 0);
+
+    const remainingIncome = totalIncome - totalExpense;
+
+    console.log(totalIncome, ' total income');
+    console.log(totalExpense, 'total exprnse');
+    console.log(remainingIncome, ' remainingIncome');
+
+    // Update chart data
+    setChartData({
+      labels: ['Income', 'Expense', 'Remaining'],
+      datasets: [
+        {
+          data: [
+            convertAmount(totalIncome),
+            convertAmount(totalExpense),
+            convertAmount(remainingIncome),
+          ],
+        },
+      ],
+    });
+  }, [allData]);
+
+  console.log(chartData?.datasets?.data);
 
   return (
     <View style={styles.container}>
@@ -192,31 +243,78 @@ export default function AnalysisScreen() {
                 />
               </TouchableOpacity>
             </View>
-            <BarChart
+            {/* <BarChart
               data={chartData}
               width={screenWidth - 60} // Adjust width to fit your layout
               height={220}
               yAxisLabel="$"
+              // chartConfig={{
+              //   backgroundColor: colors.primary,
+              //   backgroundGradientFrom: colors.primary,
+              //   backgroundGradientTo: '#ffa726',
+              //   decimalPlaces: 2, // optional, defaults to 2 decimal places
+              //   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              //   labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              //   style: {
+              //     borderRadius: 16,
+              //   },
+              //   propsForDots: {
+              //     r: '6',
+              //     strokeWidth: '2',
+              //     stroke: '#ffa726',
+              //   },
+              // }}
               chartConfig={{
                 backgroundColor: colors.primary,
                 backgroundGradientFrom: colors.primary,
                 backgroundGradientTo: '#ffa726',
-                decimalPlaces: 2, // optional, defaults to 2 decimal places
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                decimalPlaces: 2,
+                color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`, // Blue color for bars
                 labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                 style: {
                   borderRadius: 16,
                 },
-                propsForDots: {
-                  r: '6',
-                  strokeWidth: '2',
-                  stroke: '#ffa726',
+                barPercentage: 0.7, // Adjust the width of the bars
+                propsForBackgroundLines: {
+                  strokeWidth: 1,
+                  stroke: 'rgba(0, 0, 0, 0.1)', // Add grid lines for better visibility
                 },
               }}
               style={{
                 marginVertical: 8,
                 borderRadius: 16,
               }}
+            /> */}
+            {/* <ProgressChart
+              data={chartData}
+              width={screenWidth - 60}
+              height={220}
+              strokeWidth={16}
+              radius={32}
+              chartConfig={chartConfig}
+              hideLegend={false}
+            /> */}
+            {/* <LineChart
+              data={data}
+              width={screenWidth - 60}
+              height={220}
+              chartConfig={chartConfig}
+            /> */}
+            <BarChart
+              data={chartData}
+              width={screenWidth - 50}
+              height={220}
+              chartConfig={{
+                backgroundColor: '#f5f5f5',
+                backgroundGradientFrom: '#ffffff',
+                backgroundGradientTo: '#ffffff',
+                decimalPlaces: 2,
+                color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                barPercentage: 0.7,
+              }}
+              fromZero
+              showValuesOnTopOfBars
             />
           </View>
         )}

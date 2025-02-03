@@ -13,7 +13,7 @@ import React, {useEffect, useState} from 'react';
 import colors from '../../config/colors';
 import BackCompo from '../../components/BackCompo';
 import ButtonComponent from '../../components/ButtonComponent';
-import {useNavigation} from '@react-navigation/native';
+import {StackActions, useNavigation} from '@react-navigation/native';
 import TextInputCompo from '../../components/TextInputCompo';
 import DatePicker from 'react-native-date-picker';
 import auth from '@react-native-firebase/auth';
@@ -97,7 +97,8 @@ export default function AddSavingScreen({route}) {
         });
         setLoading(false);
         Alert.alert('Savings added!');
-        navigation.goBack();
+        // navigation.goBack();
+        navigation.dispatch(StackActions.replace('BottomTabNavigator'));
       } catch (error) {
         setLoading(false);
         console.log('error while adding booking: ', error);
