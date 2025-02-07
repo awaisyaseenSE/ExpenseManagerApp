@@ -251,7 +251,6 @@ export default function CurrencyConversionScreen() {
         constansts.currencyCode = selectedCurrency?.code;
         setLoading(false);
         Alert.alert('Currency is saved!');
-        // navigation.goBack();
         navigation.dispatch(StackActions.replace('BottomTabNavigator'));
       }
     } catch (error) {
