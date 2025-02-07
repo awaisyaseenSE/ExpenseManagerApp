@@ -39,6 +39,7 @@ export default function TransactionScreen() {
           ...incomeData,
           isIncome: true,
           isSaving: false,
+          id: doc.id,
         });
       });
 
@@ -53,6 +54,7 @@ export default function TransactionScreen() {
           ...savingData,
           isIncome: false,
           isSaving: true,
+          id: doc.id,
         });
       });
       setAllData(data);

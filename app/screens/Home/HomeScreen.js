@@ -137,6 +137,7 @@ export default function HomeScreen() {
           ...incomeData,
           isIncome: true,
           isSaving: false,
+          id: doc.id,
         });
       });
 
@@ -151,6 +152,7 @@ export default function HomeScreen() {
           ...savingData,
           isIncome: false,
           isSaving: true,
+          id: doc.id,
         });
       });
       setAllData(data);

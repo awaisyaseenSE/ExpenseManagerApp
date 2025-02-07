@@ -10,6 +10,7 @@ import SearchScreen from '../screens/Search/SearchScreen';
 import EditProfileScreen from '../screens/Profile/EditProfileScreen';
 import FaqScreen from '../screens/Faq/FaqScreen';
 import CurrencyConversionScreen from '../screens/Currency/CurrencyConversionScreen';
+import EditIncomeExpenseScreen from '../screens/EditExpenseIncome/EditIncomeExpenseScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +57,12 @@ function AppNavigator() {
       <Stack.Screen
         name="CurrencyConversionScreen"
         component={CurrencyConversionScreen}
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name="EditIncomeExpenseScreen"
+        component={EditIncomeExpenseScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

@@ -1,11 +1,12 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import colors from '../../config/colors';
 import constants from '../../constants/constansts';
+import {useNavigation} from '@react-navigation/native';
 
 const HomeListCompo = ({data, index}) => {
   const selectedCurrency = constants.currencyCode;
-
+  const navigation = useNavigation();
   const [exchangeRate, setExchangeRate] = useState(1);
 
   useEffect(() => {
@@ -40,7 +41,15 @@ const HomeListCompo = ({data, index}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() =>
+        navigation.navigate('EditIncomeExpenseScreen', {
+          data: data,
+          type: data?.isIncome ? 'income' : 'saving',
+        })
+      }
+      style={styles.container}>
       <View style={styles.icContainer}>
         <Image
           source={
@@ -59,7 +68,7 @@ const HomeListCompo = ({data, index}) => {
       <Text style={styles.price}>
         {selectedCurrency} {convertAmount(data?.amount)}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

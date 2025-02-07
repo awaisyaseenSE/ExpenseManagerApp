@@ -34,6 +34,7 @@ export default function SavingDetailScreen({route}) {
         snap => {
           const data = snap.docs.map(doc => ({
             ...doc.data(),
+            id: doc.id,
           }));
           console.log(data.length);
           setAllSavings(data);

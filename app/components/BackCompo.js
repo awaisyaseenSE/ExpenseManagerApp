@@ -3,7 +3,14 @@ import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../config/colors';
 
-const BackCompo = ({showBack = true, title = '', style, onPressBack}) => {
+const BackCompo = ({
+  showBack = true,
+  title = '',
+  style,
+  onPressBack,
+  rightIcon = require('../assets/notification.png'),
+  onPressRightIcon,
+}) => {
   const navigation = useNavigation();
   const backPress = onPressBack ? onPressBack : () => navigation.goBack();
 
@@ -21,11 +28,8 @@ const BackCompo = ({showBack = true, title = '', style, onPressBack}) => {
         <View style={styles.backIC} />
       )}
       <Text style={styles.heading}>{title}</Text>
-      <TouchableOpacity>
-        <Image
-          source={require('../assets/notification.png')}
-          style={styles.rightIc}
-        />
+      <TouchableOpacity onPress={onPressRightIcon}>
+        <Image source={rightIcon} style={styles.rightIc} />
       </TouchableOpacity>
     </View>
   );
