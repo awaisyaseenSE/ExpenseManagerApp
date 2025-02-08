@@ -219,7 +219,7 @@ export default function EditIncomeExpenseScreen({route}) {
         <View style={styles.container}>
           <BackCompo
             title={`Edit ${type}`}
-            rightIcon={require('../../assets/category.png')}
+            rightIcon={require('../../assets/delete.png')}
             onPressRightIcon={() => handleDelete()}
           />
           <View style={styles.content}>
